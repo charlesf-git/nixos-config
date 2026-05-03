@@ -13,6 +13,7 @@
     nixosModules = {
       # add modules here. Example:
       # moduleName = import ./modules/moduleName.nix;
+      devTools = import ./modules/dev-tools.nix
     };
     
     inherit home-manager;
