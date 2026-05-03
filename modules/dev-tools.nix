@@ -17,5 +17,9 @@
       bbenoist.nix
       jnoortheen.nix-ide
       esbenp.prettier-vscode
-  ];
+      pkief.material-icon-theme
+    ];
+    userSettings = {
+      "workbench.iconTheme" = "material-icon-theme";
+    };
 }
