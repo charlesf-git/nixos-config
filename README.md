@@ -18,12 +18,7 @@ nix-shell -p git
 git clone https://github.com/charlesf-git/nixos-config.git ~/nixos-config
 ```
 
-### 3. Copy the example settings file and fill your details
-```bash
-cp ~/nixos-config/settings.example.nix ~/nixos-config/settings.nix
-```
-
-Then edit `settings.nix` with your personal details.
+### 3. Edit `settings.nix` file and fill your details
 
 ### 4. Choose your modules
 In `flake.nix`, comment the modules you want disabled:
