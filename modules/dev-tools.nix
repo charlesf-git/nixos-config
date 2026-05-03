@@ -17,7 +17,5 @@
       bbenoist.nix
       jnoortheen.nix-ide
       esbenp.prettier-vscode
-      dbaemer.vscode-eslint\
-    ];
   ];
 }
