@@ -28,6 +28,7 @@
     # Install GNOME apps
     environment.systemPackages = with pkgs; [
       gnome-terminal
+      gnomeExtensions.dash-to-dock
     ];
 
     # Set GNOME Terminal as the default terminal via dconf
@@ -43,6 +44,26 @@
       "org/gnome/terminal/legacy" = {
         default-show-menubar = false;
         theme-variant = "dark";
+      };
+
+      # Show minimize and maximize buttons alongside close
+      "org/gnome/desktop/wm/preferences" = {
+        button-layout = "appmenu:minimize,maximize,close";
+      };
+
+      # Enable dash-to-dock extension
+      "org/gnome/shell" = {
+        disable-user-extensions = false;
+        enabled-extensions = [
+          "dash-to-dock@micxgx.gmail.com"
+        ];
+      };
+
+      # Optional: configure dash-to-dock behaviour
+      "org/gnome/shell/extensions/dash-to-dock" = {
+        dock-position = "BOTTOM";
+        intellihide = true;
+        show-trash = false;
       };
     };
   };
