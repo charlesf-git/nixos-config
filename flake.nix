@@ -24,6 +24,7 @@
           }
 
           # add modules here
+          ./modules/flatpak.nix
           ./modules/dev-tools.nix
         ];
       };
