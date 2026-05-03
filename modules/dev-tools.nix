@@ -2,7 +2,7 @@
   nixpkgs.config.allowUnfree = true;
   
   environment.systemPackages = with pkgs; [
-    git
+    gitFull
     curl
     wget
     htop
@@ -17,7 +17,7 @@
       bbenoist.nix
       jnoortheen.nix-ide
       esbenp.prettier-vscode
-      dbaemer.vscode-eslint
+      dbaemer.vscode-eslint\
     ];
   ];
 }
