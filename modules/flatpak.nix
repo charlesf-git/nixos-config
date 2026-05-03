@@ -1,4 +1,8 @@
-{ config, pkgs, ... }: {
+{ config, pkgs, settings, lib, ... }:
+let
+  vlc = "org.videolan.VLC.desktop";
+  isGnome = config.services.desktopManager.gnome.enable;
+in {
   services.flatpak = {
     enable = true;
 
@@ -10,9 +14,32 @@
       "com.github.tchx84.Flatseal"
       "io.github.flattool.Warehouse"
       "org.videolan.VLC"
+    ] ++ lib.optionals isGnome [
+      "com.mattjakeman.ExtensionManager"
     ];
 
     # Keep all declared Flatpaks up to date on each rebuild
     update.onActivation = true;
+  };
+  
+  home-manager.users.${settings.username}.xdg.mimeApps = {
+    enable = true;
+    defaultApplications = {
+      "video/mp4"        = vlc;
+      "video/mkv"        = vlc;
+      "video/x-matroska" = vlc;
+      "video/mpeg"       = vlc;
+      "video/quicktime"  = vlc;
+      "video/x-msvideo"  = vlc;
+      "video/webm"       = vlc;
+      "video/ogg"        = vlc;
+      "audio/mpeg"       = vlc;
+      "audio/mp4"        = vlc;
+      "audio/flac"       = vlc;
+      "audio/ogg"        = vlc;
+      "audio/x-wav"      = vlc;
+      "audio/aac"        = vlc;
+      "audio/opus"       = vlc;
+    };
   };
 }

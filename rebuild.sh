@@ -7,4 +7,4 @@ HOSTNAME=$(nix-instantiate --eval -E "(import $FLAKE_DIR/settings.nix).hostname"
 echo ">> Rebuilding NixOS config for: $HOSTNAME"
 
 nix-shell -p git --run \
-  "sudo nixos-rebuild switch --flake $FLAKE_DIR#$HOSTNAME"
+  "sudo nixos-rebuild switch --flake $FLAKE_DIR#$HOSTNAME --impure"

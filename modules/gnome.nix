@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }: {
+{ config, pkgs, lib, settings, ... }: {
 
   # This entire block will only be applied if GNOME is the active desktop
   config = lib.mkIf config.services.desktopManager.gnome.enable {
@@ -36,10 +36,5 @@
         theme-variant = "dark";
       };
     };
-
-    # Flatpak apps only relevant on GNOME
-    services.flatpak.packages = [
-      "com.mattjakeman.ExtensionManager"
-    ];
   };
 }
