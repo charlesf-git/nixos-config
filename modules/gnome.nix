@@ -6,7 +6,9 @@
     environment.gnome.excludePackages = with pkgs; [
       epiphany # Web
       geary
-      totem # Video Player
+      totem # Videos
+      showtime # Video Player
+      decibels # Audio Player
       gnome-contacts
       gnome-weather
       gnome-maps
@@ -14,6 +16,13 @@
       gnome-tour
       simple-scan # Document Scanner
       gnome-console
+      gnome-software
+      gnome-connections
+      yelp
+      seahorse # Password and Keys
+      xterm
+      #loupe #Image Viewer
+      #papers  #Document Viewer
     ];
 
     # Install GNOME apps
