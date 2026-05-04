@@ -31,7 +31,9 @@
           ./modules/flatpak.nix
           ./modules/gnome.nix
           ./modules/dev-tools.nix
-
+          ./modules/java.nix
+          ./modules/android.nix
+          ./modules/flutter.nix
         ];
       };
     };
