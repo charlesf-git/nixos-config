@@ -1,12 +1,14 @@
 # nixos-config
 My NixOs module library. Machine-specific details (hardware, personal info) stay in `/etc/nixos` and are never committed to this repo.
 
-## Modules
-| Module | What is adds |
-|---|---|
-| `devTools` | gitFull, VS Code, curl, ripgrep, fd, htop |
+## Table of Contents
+- [Setting up a new machine](#setting-up-a-new-machine)
+- [Add a new module](#adding-a-new-module)
+- [Python development](#python-development)
+- [Android development](#android-development)
+- [Flutter development](#flutter-development)
 
-## Setting up new machine
+## Setting up a new machine
 
 ### 1. Boot into NixOS and get git temporarily
 ```bash
@@ -95,3 +97,43 @@ pip install -r requirements.txt
 | `pyenv activate myenv` | Activate a virtual environment |
 | `pyenv deactivate` | Deactivate current virtual environment |
 | `pyenv uninstall 3.11.8` | Remove a Python version |
+
+
+## Android development
+
+Android Studio manages its own SDK, so after a fresh setup you need to complete the first-run wizard before Flutter or terminal-based Android tools will work.
+
+### First-time setup
+
+1. Open **Android Studio** from the app grid
+2. Complete the **Setup Wizard** — it will download the Android SDK into `~/Android/Sdk`
+3. Once the wizard finishes, install the required SDK tools:
+   - Go to **Settings → Languages & Frameworks → Android SDK**
+   - Under **SDK Platforms** — install your target Android version
+   - Under **SDK Tools** — make sure these are checked:
+     - Android SDK Build-Tools
+     - Android SDK Platform-Tools
+     - Android SDK Command-line Tools
+     - Android Emulator
+
+## Flutter development
+
+Flutter versions are managed with `fvm` (Flutter Version Manager). After a fresh setup, install a Flutter version and complete the Android setup first before running Flutter.
+
+### First-time setup
+
+```bash
+# Install the stable Flutter version
+fvm install stable
+
+# Set it as the global default
+fvm global stable
+
+# Disable platforms you won't be using
+fvm flutter config --no-enable-linux-desktop
+fvm flutter config --no-enable-windows-desktop
+
+# Verify the setup — Android toolchain should be green
+# Web and Linux errors are fine to ignore if not targeting those platforms
+fvm flutter doctor
+```
