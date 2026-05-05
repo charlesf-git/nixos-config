@@ -17,6 +17,10 @@
   # Your email as it will appear in git commits
   gitEmail = "charlesf.git@gmail.com";
 
+  # Your login shell - determines which shell gets configured with aliases.
+  # Run `echo $SHELL` to check. Common values: "bash" or "zsh"
+  shell = "bash";
+
   # The NixOS state version - set this to the NixOS version you initially installed
   # and never change it afterwards, even when upgrading NixOS
   # Run `nixos-version` to see your current version

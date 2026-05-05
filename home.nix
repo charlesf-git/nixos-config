@@ -22,6 +22,7 @@ in {
       bbenoist.nix
       jnoortheen.nix-ide
       esbenp.prettier-vscode
+      dbaeumer.vscode-eslint
       pkief.material-icon-theme
     ];
     userSettings = {
