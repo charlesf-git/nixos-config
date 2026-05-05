@@ -1,4 +1,4 @@
-{ config, pkgs, settings, lib, vscode-marketplace, vscode-marketplace-unfree, ... }:
+{ config, pkgs, settings, lib, ... }:
 let
   pyenvInit = ''
     eval "$(pyenv init -)"
@@ -71,26 +71,6 @@ in {
     programs.zsh = lib.mkIf (settings.shell == "zsh") {
       enable = true;
       initExtra = pyenvInit;
-    };
-
-    programs.vscode.extensions = with pkgs.vscode-extensions; [
-      ms-python.python
-      ms-python.debugpy
-      charliermarsh.ruff
-      ms-toolsai.jupyter
-      vscode-marketplace-unfree.ms-python.vscode-pylance
-    ];
-
-    programs.vscode.userSettings = {
-      "[python]" = {
-        "editor.defaultFormatter" = "charliermarsh.ruff";
-        "editor.formatOnSave" = true;
-        "editor.codeActionsOnSave" = {
-          "source.fixAll.ruff" = "explicit";
-          "source.organizeImports.ruff" = "explicit";
-        };
-      };
-      "python.terminal.activateEnvironment" = true;
     };
   };
 }
