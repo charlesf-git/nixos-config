@@ -48,6 +48,7 @@
           ./modules/flutter.nix
           ./modules/python.nix
           ./modules/containers.nix
+          ./modules/javascript.nix
         ];
       };
     };

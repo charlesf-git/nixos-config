@@ -38,6 +38,11 @@ in {
       # Flutter / Dart
       dart-code.dart-code
       dart-code.flutter
+
+      # JavaScript / TypeScript
+      bradlc.vscode-tailwindcss
+      prisma.prisma
+      pkgs.vscode-marketplace.orta.vscode-jest
     ];
     userSettings = {
       "workbench.iconTheme" = "material-icon-theme";
@@ -52,6 +57,11 @@ in {
       };
       
       "python.terminal.activateEnvironment" = true;
+
+      "[javascript]"."editor.defaultFormatter" = "esbenp.prettier-vscode";
+      "[javascriptreact]"."editor.defaultFormatter" = "esbenp.prettier-vscode";
+      "[typescript]"."editor.defaultFormatter" = "esbenp.prettier-vscode";
+      "[typescriptreact]"."editor.defaultFormatter" = "esbenp.prettier-vscode";
     };
   };
 }

@@ -38,6 +38,7 @@ Several modules include NixOS-specific shims that are easy to break accidentally
 - **`flutter.nix`** — enables `programs.nix-ld` so FVM-downloaded Flutter binaries (which are FHS-compiled) can run on NixOS. `CHROME_EXECUTABLE` points to the Nix-managed Chromium.
 - **`claude.nix`** — wraps the Claude Code CLI with bubblewrap, restricting it to `~/Development` with read-only system access. `claude-unsafe` is the unrestricted escape hatch.
 - **`containers.nix`** — Podman with `dockerCompat = true` (aliases `docker` → `podman`, compatible socket). `dns_enabled = true` is set explicitly because Podman doesn't enable container DNS by default (unlike Docker). `distrobox` is installed as a plain package — `programs.distrobox` is not a real NixOS option. Bottles is installed via Flatpak (merges with `flatpak.nix` declarations).
+- **`javascript.nix`** — `fnm` for Node version management + `bun` as runtime/package manager. `fnm` downloads pre-compiled FHS binaries so `nix-ld` is enabled here (merges safely with `flutter.nix` if both are active). `--use-on-cd` in the shell init makes fnm auto-switch Node versions when entering a directory with `.node-version` or `.nvmrc`. Use `fnm install <version>` and `fnm use <version>` to manage Node versions.
 
 ## Adding a Module
 
