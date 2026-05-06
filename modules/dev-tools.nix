@@ -9,5 +9,6 @@
     ripgrep
     fd
     unzip
+    beekeeper-studio
   ];
 }
