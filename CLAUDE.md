@@ -37,6 +37,7 @@ Several modules include NixOS-specific shims that are easy to break accidentally
 - **`python.nix`** — `pyenv-install` is a wrapper around `pyenv install` that injects the correct Nix store library paths (`LDFLAGS`, `CPPFLAGS`, etc.) needed to compile CPython. Use `pyenv-install` instead of plain `pyenv install`.
 - **`flutter.nix`** — enables `programs.nix-ld` so FVM-downloaded Flutter binaries (which are FHS-compiled) can run on NixOS. `CHROME_EXECUTABLE` points to the Nix-managed Chromium.
 - **`claude.nix`** — wraps the Claude Code CLI with bubblewrap, restricting it to `~/Development` with read-only system access. `claude-unsafe` is the unrestricted escape hatch.
+- **`containers.nix`** — Podman with `dockerCompat = true` (aliases `docker` → `podman`, compatible socket). `dns_enabled = true` is set explicitly because Podman doesn't enable container DNS by default (unlike Docker). `distrobox` is installed as a plain package — `programs.distrobox` is not a real NixOS option. Bottles is installed via Flatpak (merges with `flatpak.nix` declarations).
 
 ## Adding a Module
 
