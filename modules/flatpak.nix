@@ -14,6 +14,12 @@ in {
       "com.github.tchx84.Flatseal"
       "io.github.flattool.Warehouse"
       "org.videolan.VLC"
+      "io.github.peazip.PeaZip"
+      "io.github.ellie_commons.cherrypick"
+      "org.inkscape.Inkscape"
+      "org.gnome.meld"
+      "me.iepure.devtoolbox"
+      "com.getpostman.Postman"
     ] ++ lib.optionals isGnome [
       "com.mattjakeman.ExtensionManager"
     ];
