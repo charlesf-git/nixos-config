@@ -49,6 +49,7 @@
           ./modules/python.nix
           ./modules/containers.nix
           ./modules/javascript.nix
+          ./modules/rust.nix
         ];
       };
     };

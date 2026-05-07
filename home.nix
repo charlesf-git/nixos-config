@@ -43,6 +43,11 @@ in {
       bradlc.vscode-tailwindcss
       prisma.prisma
       pkgs.vscode-marketplace.orta.vscode-jest
+
+      # Rust
+      rust-lang.rust-analyzer
+      serayuzgur.crates
+      vadimcn.vscode-lldb
     ];
     userSettings = {
       "workbench.iconTheme" = "material-icon-theme";
@@ -57,6 +62,12 @@ in {
       };
       
       "python.terminal.activateEnvironment" = true;
+
+      "[rust]" = {
+        "editor.defaultFormatter" = "rust-lang.rust-analyzer";
+        "editor.formatOnSave" = true;
+      };
+      "rust-analyzer.check.command" = "clippy";
 
       "[javascript]"."editor.defaultFormatter" = "esbenp.prettier-vscode";
       "[javascriptreact]"."editor.defaultFormatter" = "esbenp.prettier-vscode";
