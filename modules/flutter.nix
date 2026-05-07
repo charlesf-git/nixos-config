@@ -14,23 +14,31 @@
 
     home.sessionPath = [ "$HOME/fvm/default/bin" ];
 
-    # The Android QEMU binary was previously patched to use the real glibc linker,
-    # which bypasses NIX_LD_LIBRARY_PATH entirely. This re-patches it to use the
-    # nix-ld stub instead, so the libraries listed below are actually found.
     home.activation.patchAndroidEmulator =
       lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        # Patch QEMU to use the nix-ld interceptor so NIX_LD_LIBRARY_PATH is honoured
         QEMU="$HOME/Android/Sdk/emulator/qemu/linux-x86_64/qemu-system-x86_64"
-        NIX_LD_STUB="/run/current-system/sw/share/nix-ld/lib/ld.so"
-        if [ -f "$QEMU" ] && [ -w "$QEMU" ] && [ -f "$NIX_LD_STUB" ]; then
-          ${pkgs.patchelf}/bin/patchelf --set-interpreter "$NIX_LD_STUB" "$QEMU" \
-            && echo "android emulator: patched interpreter to nix-ld stub" \
-            || echo "android emulator: patchelf failed"
+        if [ -f "$QEMU" ] && [ -w "$QEMU" ]; then
+          ${pkgs.patchelf}/bin/patchelf \
+            --set-interpreter /lib64/ld-linux-x86-64.so.2 \
+            "$QEMU" \
+            && echo "android emulator: patched qemu interpreter" \
+            || echo "android emulator: failed to patch qemu interpreter"
+        fi
+
+        # Patch the Qt xcb plugin RPATH so it finds its bundled xcb libs and
+        # nix-ld system libs even after the emulator resets LD_LIBRARY_PATH
+        LIBQXCB="$HOME/Android/Sdk/emulator/lib64/qt/plugins/platforms/libqxcbAndroidEmu.so"
+        if [ -f "$LIBQXCB" ] && [ -w "$LIBQXCB" ]; then
+          ${pkgs.patchelf}/bin/patchelf \
+            --set-rpath '$ORIGIN/../../lib:/run/current-system/sw/share/nix-ld/lib' \
+            "$LIBQXCB" \
+            && echo "android emulator: patched libqxcb rpath" \
+            || echo "android emulator: failed to patch libqxcb rpath"
         fi
       '';
   };
 
-  # nix-ld provides the FHS dynamic linker stub so pre-compiled binaries
-  # (fvm Flutter/Dart, Android emulator QEMU) can find their shared libraries.
   programs.nix-ld = {
     enable = true;
     libraries = with pkgs; [
@@ -77,6 +85,23 @@
       wayland
       vulkan-loader
       udev
+      libbsd
+      libmd
+      pixman
+      libjpeg
+      libcap
+      libusb1
+      snappy
+      xcb-util-cursor
+      xorg.xcbutil
+      xorg.xcbutilwm
+      xorg.xcbutilimage
+      xorg.xcbutilkeysyms
+      xorg.xcbutilrenderutil
+      # Missing deps of the bundled Qt xcb platform plugin
+      xorg.libSM
+      xorg.libICE
+      llvmPackages.libcxx
     ];
   };
 }
