@@ -11,6 +11,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This runs `sudo nixos-rebuild switch --flake ~/nixos-config#<hostname> --impure`. The `--impure` flag is required because `flake.nix` imports `settings.nix` at evaluation time.
 
+**IMPORTANT: Never run `rebuild.sh` autonomously. After making changes, always ask the user to run it themselves.**
+
 ## Architecture
 
 This is a **flake-based, single-machine, modular NixOS configuration**. The key design principle is that hardware-specific and machine-specific files (`/etc/nixos/hardware-configuration.nix`, `/etc/nixos/configuration.nix`) live outside the repo and are referenced by the flake — the repo itself is portable.

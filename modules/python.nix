@@ -2,7 +2,6 @@
 let
   pyenvInit = ''
     eval "$(pyenv init -)"
-    eval "$(pyenv virtualenv-init -)"
   '';
 
   # Wrapper script that sets all required Nix store library paths
@@ -53,7 +52,6 @@ in {
 
   environment.sessionVariables = {
     PYENV_ROOT = "$HOME/.pyenv";
-    PYENV_VIRTUALENV_DISABLE_PROMPT = "1";
   };
 
   home-manager.users.${settings.username} = {
