@@ -8,11 +8,15 @@
 
   environment.sessionVariables = {
     CHROME_EXECUTABLE = "${pkgs.chromium}/bin/chromium";
+    VK_ICD_FILENAMES = "/run/opengl-driver/share/vulkan/icd.d/nvidia_icd.json";
   };
 
   home-manager.users.${settings.username} = { lib, ... }: {
 
-    home.sessionPath = [ "$HOME/fvm/default/bin" ];
+    home.sessionPath = [
+      "$HOME/fvm/default/bin"
+      "$HOME/Android/Sdk/platform-tools"
+    ];
 
     home.activation.patchAndroidEmulator =
       lib.hm.dag.entryAfter [ "writeBoundary" ] ''
