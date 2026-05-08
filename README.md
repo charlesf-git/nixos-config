@@ -1,139 +1,203 @@
 # nixos-config
-My NixOs module library. Machine-specific details (hardware, personal info) stay in `/etc/nixos` and are never committed to this repo.
+
+A flake-based, modular NixOS configuration. Machine-specific files (`hardware-configuration.nix`, `configuration.nix`) live in `/etc/nixos` and are never committed — this repo is fully portable.
 
 ## Table of Contents
+- [Architecture](#architecture)
+- [Modules](#modules)
 - [Setting up a new machine](#setting-up-a-new-machine)
-- [Add a new module](#adding-a-new-module)
+- [Adding a module](#adding-a-module)
 - [Python development](#python-development)
 - [Android development](#android-development)
 - [Flutter development](#flutter-development)
+- [JavaScript / Node.js development](#javascript--nodejs-development)
+- [Rust development](#rust-development)
+- [Containers](#containers)
+
+## Architecture
+
+| File | Role |
+|---|---|
+| `flake.nix` | Entry point. Enable/disable modules by commenting lines in the `modules` list. |
+| `settings.nix` | Single source of truth for `username`, `hostname`, `system`, `gitName`, `gitEmail`, `shell`, `stateVersion`. |
+| `home.nix` | Home Manager config: git, VS Code extensions and settings. |
+| `modules/` | Self-contained feature modules, one per domain. |
+
+A single `pkgs` instance is created in `flake.nix` with `allowUnfree = true` and the `nix-vscode-extensions` overlay applied. All modules and Home Manager share this instance — do not re-import nixpkgs inside modules.
+
+## Modules
+
+| Module | What it provides |
+|---|---|
+| `flatpak.nix` | Flatpak via nix-flatpak; installs Brave, Flatseal, VLC, Inkscape, and more from Flathub. |
+| `gnome.nix` | Strips unwanted GNOME defaults; applies only when GNOME is the active desktop. |
+| `dev-tools.nix` | Core CLI tools: git, curl, wget, ripgrep, fd, htop, beekeeper-studio. |
+| `claude.nix` | Claude Code CLI sandboxed to `~/Development` via bubblewrap; `claude-unsafe` escapes the sandbox. |
+| `java.nix` | JDK 17 as the system default plus Gradle and Maven. |
+| `android.nix` | Android Studio, KVM acceleration for the emulator, `ANDROID_HOME` env vars. |
+| `flutter.nix` | FVM, nix-ld for FHS binaries, Chromium as `CHROME_EXECUTABLE`, `android-setup` helper script. |
+| `python.nix` | pyenv plus the `pyenv-install` wrapper that injects Nix store library paths for compiling CPython. |
+| `containers.nix` | Podman with Docker compat, container DNS, distrobox, podman-compose, Bottles via Flatpak. |
+| `javascript.nix` | `fnm` for Node version management, `bun` runtime, nix-ld for FHS Node binaries. |
+| `rust.nix` | `rustup`, `gcc` linker, nix-ld for FHS Rust toolchain binaries. |
 
 ## Setting up a new machine
 
-### 1. Boot into NixOS and get git temporarily
+### 1. Enable flakes in `/etc/nixos/configuration.nix`
+Open the file with nano:
 ```bash
-nix-shell -p git
+sudo nano /etc/nixos/configuration.nix
 ```
-
-### 2. Clone this repo
-```bash
-git clone https://github.com/charlesf-git/nixos-config.git ~/nixos-config
-```
-
-### 3. Edit `settings.nix` file and fill your details
-
-### 4. Choose your modules
-In `flake.nix`, comment the modules you want disabled:
+Add this line if it isn't already present:
 ```nix
-./modules/dev-tools.nix
-# ./modules/flutter.nix
+nix.settings.experimental-features = [ "nix-command" "flakes" ];
 ```
-### 5. Enable flakes in /etc/nixos/configuration.nix
-
-Add this line if it isn't already there:
-```nix
-nix.settings.experimental-features = [ "nix-command" "flakes" ]
-```
-
-Apply these changes once with the old rebuild command:
+Save with `Ctrl+O` → `Enter`, then exit with `Ctrl+X`. Apply the change:
 ```bash
 sudo nixos-rebuild switch
 ```
 
-### 6. All future rebuilds using `rebuild.sh`
+### 2. Get git temporarily
+`nix-shell -p git` drops you into a temporary shell with `git` available without permanently installing it. On NixOS, packages aren't installed globally by default — `nix-shell -p` is the standard way to pull in a tool for one-off use. Once you exit the shell, git is gone.
+```bash
+nix-shell -p git
+```
+
+### 3. Clone this repo
+```bash
+git clone https://github.com/charlesf-git/nixos-config.git ~/nixos-config
+```
+
+### 4. Fill in `settings.nix`
+Edit `~/nixos-config/settings.nix` and set `username`, `hostname`, `system`, `gitName`, `gitEmail`, `shell`, and `stateVersion` to match your machine.
+
+### 5. Choose your modules
+In `flake.nix`, comment out any modules you don't need:
+```nix
+./modules/dev-tools.nix
+# ./modules/flutter.nix   # comment to disable
+```
+
+### 6. All future rebuilds use `rebuild.sh`
 ```bash
 ~/nixos-config/rebuild.sh
 ```
+This runs `sudo nixos-rebuild switch --flake ~/nixos-config#<hostname> --impure`. The `--impure` flag is required because `flake.nix` imports `settings.nix` at evaluation time.
 
-## Adding a new module
-1. Create `modules/my-module.nix`
-2. Add it in `flake.nix`
-3. Run `~/nixos-config/rebuild.sh`
-4. Commit and push
+## Adding a module
 
-## Python Development
+1. Create `modules/my-module.nix` following the existing module pattern.
+2. Add `./modules/my-module.nix` to the `modules` list in `flake.nix`.
+3. Run `~/nixos-config/rebuild.sh`.
 
+## Python development
 
-Python versions are managed with `pyenv`. After a fresh setup or new machine, install a Python version using the custom wrapper (required on NixOS):
+Python versions are managed with `pyenv`. Always use the `pyenv-install` wrapper instead of plain `pyenv install` — it injects the correct Nix store library paths needed to compile CPython from source.
 
 ```bash
-# Use pyenv-install instead of plain `pyenv install`
-# This sets the correct Nix store library paths for compiling Python
 pyenv-install 3.12.3
-
-# Set it as the global default
 pyenv global 3.12.3
-
-# Verify
 python --version
 ```
 
-### Per-project Python versions
-
+### Per-project versions
 ```bash
 cd ~/projects/my-app
 
-# Set a specific Python version for this project
-# Creates a .python-version file in the project directory
+# Pin the Python version for this project (writes .python-version)
 pyenv local 3.11.8
 
-# Create and activate a virtual environment
-pyenv virtualenv 3.11.8 my-app-env
-pyenv activate my-app-env
+# Create a .venv in the project directory and activate it
+python -m venv .venv
+source .venv/bin/activate
 
-# Install dependencies as usual
 pip install -r requirements.txt
+
+# After installing new packages, update requirements.txt
+pip freeze > requirements.txt
 ```
 
-### Useful pyenv commands
+### Quick reference
 
 | Command | What it does |
 |---|---|
-| `pyenv-install 3.12.3` | Install a Python version (use this instead of `pyenv install`) |
-| `pyenv versions` | List all installed Python versions |
-| `pyenv global 3.12.3` | Set the global default Python version |
-| `pyenv local 3.11.8` | Set a per-project Python version |
-| `pyenv virtualenv 3.12.3 myenv` | Create a virtual environment |
-| `pyenv activate myenv` | Activate a virtual environment |
-| `pyenv deactivate` | Deactivate current virtual environment |
-| `pyenv uninstall 3.11.8` | Remove a Python version |
-
+| `pyenv-install 3.12.3` | Install a Python version (NixOS-compatible wrapper) |
+| `pyenv versions` | List installed versions |
+| `pyenv global 3.12.3` | Set system-wide default |
+| `pyenv local 3.11.8` | Set per-project version (writes `.python-version`) |
+| `python -m venv .venv` | Create a virtual environment in the project directory |
+| `source .venv/bin/activate` | Activate the virtual environment |
+| `deactivate` | Deactivate the virtual environment |
+| `pyenv uninstall 3.11.8` | Remove a version |
 
 ## Android development
 
-Android Studio manages its own SDK, so after a fresh setup you need to complete the first-run wizard before Flutter or terminal-based Android tools will work.
+Android Studio manages its own SDK. Complete the first-run wizard before using Flutter or any terminal-based Android tools.
 
 ### First-time setup
 
-1. Open **Android Studio** from the app grid
-2. Complete the **Setup Wizard** — it will download the Android SDK into `~/Android/Sdk`
-3. Once the wizard finishes, install the required SDK tools:
-   - Go to **Settings → Languages & Frameworks → Android SDK**
-   - Under **SDK Platforms** — install your target Android version
-   - Under **SDK Tools** — make sure these are checked:
-     - Android SDK Build-Tools
-     - Android SDK Platform-Tools
-     - Android SDK Command-line Tools
-     - Android Emulator
+1. Open **Android Studio** from the app grid.
+2. Complete the **Setup Wizard** — it downloads the SDK into `~/Android/Sdk`.
+3. Go to **Settings → Languages & Frameworks → Android SDK** and confirm these are installed:
+   - Android SDK Build-Tools
+   - Android SDK Platform-Tools
+   - Android SDK Command-line Tools
+   - Android Emulator
+
+### Emulator performance
+
+The `android-setup` helper script applies persistent performance settings (disables animations, suppresses error dialogs) to a running emulator. Run it once after the first boot of a new AVD:
+```bash
+android-setup
+```
 
 ## Flutter development
 
-Flutter versions are managed with `fvm` (Flutter Version Manager). After a fresh setup, install a Flutter version and complete the Android setup first before running Flutter.
+Flutter versions are managed with `fvm`. Complete the Android setup first.
 
 ### First-time setup
 
 ```bash
-# Install the stable Flutter version
 fvm install stable
-
-# Set it as the global default
 fvm global stable
 
-# Disable platforms you won't be using
+# Disable platforms you won't target
 fvm flutter config --no-enable-linux-desktop
 fvm flutter config --no-enable-windows-desktop
 
-# Verify the setup — Android toolchain should be green
-# Web and Linux errors are fine to ignore if not targeting those platforms
+# Android toolchain should be green; web/Linux errors are safe to ignore
 fvm flutter doctor
+```
+
+## JavaScript / Node.js development
+
+Node versions are managed with `fnm`, which auto-switches when you `cd` into a directory that has `.node-version` or `.nvmrc`.
+
+```bash
+fnm install 22
+fnm use 22
+node --version
+```
+
+Use `bun` as the runtime and package manager for new projects.
+
+## Rust development
+
+Rust toolchains are managed with `rustup`.
+
+```bash
+rustup toolchain install stable
+rustup default stable
+cargo --version
+```
+
+## Containers
+
+Podman is installed with Docker compatibility (`docker` → `podman` alias and a Docker-compatible socket). Container DNS is enabled by default.
+
+```bash
+docker run --rm hello-world    # works via podman compat
+podman-compose up              # docker-compose equivalent
+distrobox create --name dev --image ubuntu:24.04
+distrobox enter dev
 ```
