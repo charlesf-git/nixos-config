@@ -1,9 +1,28 @@
-{ config, pkgs, lib, settings, ... }: {
+{ config, pkgs, lib, settings, ... }:
+let
+  # Run once after first emulator boot to apply persistent dev settings.
+  # Settings survive restarts; re-run only if the AVD is wiped.
+  androidSetup = pkgs.writeShellScriptBin "android-setup" ''
+    ADB="$HOME/Android/Sdk/platform-tools/adb"
+    echo "Waiting for emulator to boot..."
+    $ADB wait-for-device
+    until [ "$($ADB shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')" = "1" ]; do
+      sleep 2
+    done
+    echo "Applying settings..."
+    $ADB shell settings put global hide_error_dialogs 1
+    $ADB shell settings put global window_animation_scale 0
+    $ADB shell settings put global transition_animation_scale 0
+    $ADB shell settings put global animator_duration_scale 0
+    echo "Done."
+  '';
+in {
 
   environment.systemPackages = with pkgs; [
     fvm
     chromium
     patchelf
+    androidSetup
   ];
 
   environment.sessionVariables = {
