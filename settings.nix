@@ -21,6 +21,10 @@
   # Run `echo $SHELL` to check. Common values: "bash" or "zsh"
   shell = "bash";
 
+  # Graphics hardware vendor — controls which drivers are loaded and Vulkan ICD used.
+  # Valid values: "nvidia" (Turing/RTX+), "nvidia-old" (pre-Turing, closed kernel module), "amd", "intel"
+  gpu = "nvidia-old";
+
   # The NixOS state version - set this to the NixOS version you initially installed
   # and never change it afterwards, even when upgrading NixOS
   # Run `nixos-version` to see your current version

@@ -39,6 +39,7 @@
             home-manager.users.${settings.username} = import ./home.nix;
           }
           # modules
+          ./modules/graphics-drivers.nix
           ./modules/boot.nix
           ./modules/flatpak.nix
           ./modules/gnome.nix

@@ -1,5 +1,11 @@
 { config, pkgs, lib, settings, ... }:
 let
+  vkIcd = {
+    nvidia     = "/run/opengl-driver/share/vulkan/icd.d/nvidia_icd.json";
+    nvidia-old = "/run/opengl-driver/share/vulkan/icd.d/nvidia_icd.json";
+    amd        = "/run/opengl-driver/share/vulkan/icd.d/radeon_icd.x86_64.json";
+    intel      = "/run/opengl-driver/share/vulkan/icd.d/intel_icd.x86_64.json";
+  };
   # Run once after first emulator boot to apply persistent dev settings.
   # Settings survive restarts; re-run only if the AVD is wiped.
   androidSetup = pkgs.writeShellScriptBin "android-setup" ''
@@ -27,7 +33,7 @@ in {
 
   environment.sessionVariables = {
     CHROME_EXECUTABLE = "${pkgs.chromium}/bin/chromium";
-    VK_ICD_FILENAMES = "/run/opengl-driver/share/vulkan/icd.d/nvidia_icd.json";
+    VK_ICD_FILENAMES = vkIcd.${settings.gpu};
   };
 
   home-manager.users.${settings.username} = { lib, ... }: {
