@@ -3,6 +3,8 @@ let
   vlc = "org.videolan.VLC.desktop";
   isGnome = config.services.desktopManager.gnome.enable;
 in {
+  programs.firefox.enable = true;
+
   services.flatpak = {
     enable = true;
 
@@ -31,6 +33,10 @@ in {
   home-manager.users.${settings.username}.xdg.mimeApps = {
     enable = true;
     defaultApplications = {
+      "x-scheme-handler/http"    = "firefox.desktop";
+      "x-scheme-handler/https"   = "firefox.desktop";
+      "text/html"                = "firefox.desktop";
+      "application/xhtml+xml"    = "firefox.desktop";
       "video/mp4"        = vlc;
       "video/mkv"        = vlc;
       "video/x-matroska" = vlc;
