@@ -25,6 +25,9 @@
   # Valid values: "nvidia" (Turing/RTX+), "nvidia-old" (pre-Turing, closed kernel module), "amd", "intel"
   gpu = "nvidia-old";
 
+  # Python version to install — must match a nixpkgs attribute like python313, python314
+  pythonVersion = "python314";
+
   # The NixOS state version - set this to the NixOS version you initially installed
   # and never change it afterwards, even when upgrading NixOS
   # Run `nixos-version` to see your current version

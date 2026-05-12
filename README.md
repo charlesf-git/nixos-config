@@ -36,7 +36,7 @@ A single `pkgs` instance is created in `flake.nix` with `allowUnfree = true` and
 | `java.nix` | JDK 17 as the system default plus Gradle and Maven. |
 | `android.nix` | Android Studio, KVM acceleration for the emulator, `ANDROID_HOME` env vars. |
 | `flutter.nix` | FVM, nix-ld for FHS binaries, Chromium as `CHROME_EXECUTABLE`, `android-setup` helper script. |
-| `python.nix` | pyenv plus the `pyenv-install` wrapper that injects Nix store library paths for compiling CPython. |
+| `python.nix` | Python installed via nixpkgs. Version is controlled by `pythonVersion` in `settings.nix`. |
 | `containers.nix` | Podman with Docker compat, container DNS, distrobox, podman-compose, Bottles via Flatpak. |
 | `javascript.nix` | `fnm` for Node version management, `bun` runtime, nix-ld for FHS Node binaries. |
 | `rust.nix` | `rustup`, `gcc` linker, nix-ld for FHS Rust toolchain binaries. |
@@ -69,7 +69,7 @@ git clone https://github.com/charlesf-git/nixos-config.git ~/nixos-config
 ```
 
 ### 4. Fill in `settings.nix`
-Edit `~/nixos-config/settings.nix` and set `username`, `hostname`, `system`, `gitName`, `gitEmail`, `shell`, and `stateVersion` to match your machine.
+Edit `~/nixos-config/settings.nix` and set `username`, `hostname`, `system`, `gitName`, `gitEmail`, `shell`, `pythonVersion`, and `stateVersion` to match your machine.
 
 ### 5. Choose your modules
 In `flake.nix`, comment out any modules you don't need:
@@ -92,43 +92,29 @@ This runs `sudo nixos-rebuild switch --flake ~/nixos-config#<hostname> --impure`
 
 ## Python development
 
-Python versions are managed with `pyenv`. Always use the `pyenv-install` wrapper instead of plain `pyenv install` — it injects the correct Nix store library paths needed to compile CPython from source.
+The Python version is declared in `settings.nix` via `pythonVersion` (e.g. `"python314"`). To switch versions, update that field and rebuild — the value must match a nixpkgs attribute like `python312`, `python313`, `python314`.
 
-```bash
-pyenv-install 3.12.3
-pyenv global 3.12.3
-python --version
-```
+Use virtual environments for per-project dependencies:
 
-### Per-project versions
 ```bash
 cd ~/projects/my-app
-
-# Pin the Python version for this project (writes .python-version)
-pyenv local 3.11.8
-
-# Create a .venv in the project directory and activate it
 python -m venv .venv
 source .venv/bin/activate
-
 pip install -r requirements.txt
 
-# After installing new packages, update requirements.txt
+# After installing new packages, freeze them
 pip freeze > requirements.txt
+
+deactivate
 ```
 
 ### Quick reference
 
 | Command | What it does |
 |---|---|
-| `pyenv-install 3.12.3` | Install a Python version (NixOS-compatible wrapper) |
-| `pyenv versions` | List installed versions |
-| `pyenv global 3.12.3` | Set system-wide default |
-| `pyenv local 3.11.8` | Set per-project version (writes `.python-version`) |
 | `python -m venv .venv` | Create a virtual environment in the project directory |
 | `source .venv/bin/activate` | Activate the virtual environment |
 | `deactivate` | Deactivate the virtual environment |
-| `pyenv uninstall 3.11.8` | Remove a version |
 
 ## Android development
 
