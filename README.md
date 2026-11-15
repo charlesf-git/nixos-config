@@ -65,7 +65,7 @@ nix-shell -p git
 
 ### 3. Clone this repo
 ```bash
-git clone https://github.com/charlesf-git/nixos-config.git ~/nixos-config
+git clone https://github.com/charlesf-git/nixos-config.git ~/.nixos-config
 ```
 
 ### 4. Fill in `settings.nix`

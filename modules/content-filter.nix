@@ -12,6 +12,8 @@
         # --- Whitelist: bypass content filter for these domains ---
         "/anthropic.com/1.1.1.1"
         "/claude.ai/1.1.1.1"
+        "/openai.com/1.1.1.1"
+        "/chatgpt.com/1.1.1.1"
         # ----------------------------------------------------------
         # Default upstream: CleanBrowsing Family Filter
         "185.228.168.168"

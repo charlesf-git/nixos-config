@@ -11,12 +11,6 @@
   # The CPU architecture of your machine
   system = "x86_64-linux";
 
-  # Your name as it will appear in git commits
-  gitName = "charlesf-git";
-
-  # Your email as it will appear in git commits
-  gitEmail = "charlesf.git@gmail.com";
-
   # Your login shell - determines which shell gets configured with aliases.
   # Run `echo $SHELL` to check. Common values: "bash" or "zsh"
   shell = "bash";

@@ -21,17 +21,17 @@
       yelp
       seahorse # Password and Keys
       xterm
-      #loupe #Image Viewer
-      #papers  #Document Viewer
+      loupe # Image Viewer
+      papers  # Document Viewer
     ];
 
     # Install GNOME apps
     environment.systemPackages = with pkgs; [
       gnome-terminal
       gnomeExtensions.dash-to-dock
+      gnomeExtensions.blur-my-shell
     ];
 
-    # Set GNOME Terminal as the default terminal via dconf
     home-manager.users.${settings.username}.dconf.settings = {
       "org/gnome/desktop/default-applications/terminal" = {
         exec = "gnome-terminal";
@@ -45,23 +45,25 @@
         default-show-menubar = false;
         theme-variant = "dark";
       };
-
+      
       # Show minimize and maximize buttons alongside close
       "org/gnome/desktop/wm/preferences" = {
         button-layout = "appmenu:minimize,maximize,close";
       };
 
-      # Enable dash-to-dock extension
+      # Enable extensions
       "org/gnome/shell" = {
         disable-user-extensions = false;
         enabled-extensions = [
           "dash-to-dock@micxgx.gmail.com"
+          "blur-my-shell@aunetx"
         ];
       };
 
       # Optional: configure dash-to-dock behaviour
       "org/gnome/shell/extensions/dash-to-dock" = {
         dock-position = "BOTTOM";
+        click-action = "previews";
         intellihide = true;
         show-trash = false;
       };
